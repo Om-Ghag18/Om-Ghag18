@@ -1,0 +1,34 @@
+name: Update GitHub Stats
+
+on:
+  push:
+    branches:
+      - main   # run on pushes to main branch
+  schedule:
+    - cron: "0 */12 * * *"   # runs every 12 hours to keep stats fresh
+  workflow_dispatch:          # allow manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub Stats
+        uses: actions-js/profile-readme-stats@v1
+        with:
+          username: Om-Ghag18
+          theme: merko
+          hide_border: false
+          include_all_commits: false
+          count_private: false
+
+      - name: Commit & Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: update GitHub stats [skip ci]" || echo "No changes to commit"
+          git push
